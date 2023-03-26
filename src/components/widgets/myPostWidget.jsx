@@ -31,7 +31,7 @@ import {
 } from "../../config/firebase";
 import { setMessage } from "../../features/userSlice";
 import Audio from "../audioView";
-import { AudioRecorder, useAudioRecorder } from "react-audio-voice-recorder";
+import { useAudioRecorder } from "react-audio-voice-recorder";
 
 const MyPostWidget = ({ picturePath }) => {
   const dispatch = useDispatch();
@@ -95,10 +95,9 @@ const MyPostWidget = ({ picturePath }) => {
       dispatch(setPosts({ posts }));
       setImage(null);
       setFile(null);
-      setRecorder(null);
       setPost("");
     } catch (error) {
-      dispatch(setMessage({ type: "error", content: "Upload false!" }));
+      dispatch(setMessage({ type: "error", content: error.message }));
     }
   };
 
@@ -220,7 +219,6 @@ const MyPostWidget = ({ picturePath }) => {
           onClick={() => {
             setIsImage(!isImage);
             setIsFile(false);
-            setRecorder(null);
             setFile(null);
           }}
         >
@@ -235,7 +233,6 @@ const MyPostWidget = ({ picturePath }) => {
             setIsFile(!isFile);
             setIsImage(false);
             setImage(null);
-            setRecorder(null);
           }}
         >
           <AttachFileOutlined sx={{ color: mediumMain }} />
