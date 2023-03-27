@@ -106,7 +106,9 @@ const Navbar = () => {
                   <LightMode sx={{ color: dark, fontSize: "25px" }} />
                 )}
               </IconButton>
+              {/* chat box */}
               <Message sx={{ fontSize: "25px" }} />
+               {/*chat box  */}
               <Notifications sx={{ fontSize: "25px" }} />
               <Help sx={{ fontSize: "25px" }} />
               <FormControl variant="standard" value={fullName}>

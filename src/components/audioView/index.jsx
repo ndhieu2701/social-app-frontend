@@ -1,22 +1,25 @@
-import { Box,CardMedia, Typography, useTheme } from "@mui/material";
+import {
+  Box,
+  Card,
+  CardMedia,
+  Slider,
+  styled,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import React from "react";
 
-const Audio = ({ audioPath, audioName }) => {
+const AudioView = ({ audioPath, audioName }) => {
   const { palette } = useTheme();
   const main = palette.primary.main;
+
   return (
-    <Box>
-      <Typography color={main} variant="h5" fontWeight="500">
-        {audioName}
-      </Typography>
-      <CardMedia
-        component="audio"
-        src={audioPath}
-        controls
-        alt="audio record"
-      />
+    <Box mt="12px" w="100%">
+      <audio controls style={{width: "100%"}}>
+        <source src={audioPath}/>
+      </audio>
     </Box>
   );
 };
 
-export default Audio;
+export default AudioView;

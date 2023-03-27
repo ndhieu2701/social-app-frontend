@@ -30,7 +30,7 @@ import {
   postImg,
 } from "../../config/firebase";
 import { setMessage } from "../../features/userSlice";
-import Audio from "../audioView";
+import AudioView from "../audioView";
 import { useAudioRecorder } from "react-audio-voice-recorder";
 
 const MyPostWidget = ({ picturePath }) => {
@@ -48,10 +48,19 @@ const MyPostWidget = ({ picturePath }) => {
   const { palette } = useTheme();
   const { _id } = useSelector((state) => state.user.user);
   const token = useSelector((state) => state.user.token);
+  const userName = useSelector(
+    (state) => `${state.user.user.firstName} ${state.user.user.lastName}`
+  );
   const mediumMain = palette.neutral.mediumMain;
   const medium = palette.neutral.medium;
+
   //audio
   const recorderControls = useAudioRecorder();
+
+  const audioUrl = (blob) => {
+    const url = URL.createObjectURL(blob);
+    return url;
+  };
   //post action
   const handlePost = async () => {
     const formData = new FormData();
@@ -93,12 +102,12 @@ const MyPostWidget = ({ picturePath }) => {
       const posts = await response.data;
       dispatch(setMessage({ type: "success", content: "Upload success!" }));
       dispatch(setPosts({ posts }));
-      setImage(null);
-      setFile(null);
-      setPost("");
     } catch (error) {
-      dispatch(setMessage({ type: "error", content: error.message }));
+      dispatch(setMessage({ type: "error", content: "Upload false" }));
     }
+    setImage(null);
+    setFile(null);
+    setPost("");
   };
 
   return (
@@ -207,7 +216,10 @@ const MyPostWidget = ({ picturePath }) => {
         </Box>
       )}
       {recorderControls.recordingBlob && (
-        <Audio audioPath={URL.createObjectURL(recorderControls.recordingBlob)} audioName={"hahah"}/>
+        <AudioView
+          audioPath={audioUrl(recorderControls.recordingBlob)}
+          audioName={"hahah"}
+        />
       )}
       <Divider sx={{ margin: "1.25rem 0" }} />
 
