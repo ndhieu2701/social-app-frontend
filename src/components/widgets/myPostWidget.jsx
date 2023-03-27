@@ -24,14 +24,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "../../features/postSlice";
 import axios from "axios";
 import {
-  nameByDate,
-  postAudio,
   postFile,
   postImg,
 } from "../../config/firebase";
 import { setMessage } from "../../features/userSlice";
-import AudioView from "../audioView";
-import { useAudioRecorder } from "react-audio-voice-recorder";
 
 const MyPostWidget = ({ picturePath }) => {
   const dispatch = useDispatch();
@@ -41,26 +37,15 @@ const MyPostWidget = ({ picturePath }) => {
   //file dropzone
   const [isFile, setIsFile] = useState(false);
   const [file, setFile] = useState(null);
-  //audio
 
   //post
   const [post, setPost] = useState("");
   const { palette } = useTheme();
   const { _id } = useSelector((state) => state.user.user);
   const token = useSelector((state) => state.user.token);
-  const userName = useSelector(
-    (state) => `${state.user.user.firstName} ${state.user.user.lastName}`
-  );
   const mediumMain = palette.neutral.mediumMain;
   const medium = palette.neutral.medium;
 
-  //audio
-  const recorderControls = useAudioRecorder();
-
-  const audioUrl = (blob) => {
-    const url = URL.createObjectURL(blob);
-    return url;
-  };
   //post action
   const handlePost = async () => {
     const formData = new FormData();
@@ -77,12 +62,6 @@ const MyPostWidget = ({ picturePath }) => {
       formData.append("filePath", urlFile);
       formData.append("fileName", fileName);
     }
-
-    // if (audio) {
-    //   const { urlAudio, audioName } = await postAudio(audio);
-    //   formData.append("audioPath", urlAudio);
-    //   formData.append("audioName", audioName);
-    // }
 
     // for (const pair of formData.entries()) {
     //   console.log(pair[0] + ": " + pair[1]);
@@ -215,12 +194,6 @@ const MyPostWidget = ({ picturePath }) => {
           </Dropzone>
         </Box>
       )}
-      {recorderControls.recordingBlob && (
-        <AudioView
-          audioPath={audioUrl(recorderControls.recordingBlob)}
-          audioName={"hahah"}
-        />
-      )}
       <Divider sx={{ margin: "1.25rem 0" }} />
 
       <FlexBetween>
@@ -235,6 +208,7 @@ const MyPostWidget = ({ picturePath }) => {
           }}
         >
           <ImageOutlined sx={{ color: mediumMain }} />
+          <Typography>Image</Typography>
         </FlexBetween>
 
         <FlexBetween
@@ -248,41 +222,8 @@ const MyPostWidget = ({ picturePath }) => {
           }}
         >
           <AttachFileOutlined sx={{ color: mediumMain }} />
+          <Typography>Attachment</Typography>
         </FlexBetween>
-
-        {!recorderControls.isRecording && (
-          <FlexBetween
-            sx={{ cursor: "pointer" }}
-            gap="0.25rem"
-            p="0.4rem"
-            onClick={() => {
-              setIsImage(false);
-              setIsFile(false);
-              setImage(null);
-              setFile(null);
-              recorderControls.startRecording();
-            }}
-          >
-            <MicOutlined sx={{ color: mediumMain }} />
-          </FlexBetween>
-        )}
-
-        {recorderControls.isRecording && (
-          <FlexBetween
-            sx={{ cursor: "pointer" }}
-            gap="0.25rem"
-            p="0.4rem"
-            onClick={() => {
-              setIsImage(false);
-              setIsFile(false);
-              setImage(null);
-              setFile(null);
-              recorderControls.stopRecording();
-            }}
-          >
-            <Stop sx={{ color: mediumMain }} />
-          </FlexBetween>
-        )}
 
         <Button
           disabled={!post}

@@ -13,7 +13,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPost } from "../../features/postSlice";
 import axios from "axios";
 import File from "../fileView";
-import Audio from "../audioView";
 
 const PostWidget = ({
   postId,
@@ -24,8 +23,6 @@ const PostWidget = ({
   picturePath,
   filePath,
   fileName,
-  audioPath,
-  audioName,
   userPicturePath,
   likes,
   comments,
@@ -77,7 +74,6 @@ const PostWidget = ({
         />
       )}
       {filePath && <File filePath={filePath} fileName={fileName} />}
-      {audioPath && <Audio audioPath={audioPath} audioName={audioName}></Audio>}
       <FlexBetween mt="0.25rem">
         <FlexBetween gap="1rem">
           <FlexBetween gap="0.3rem">
