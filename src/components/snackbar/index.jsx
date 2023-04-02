@@ -32,7 +32,7 @@ const SnackBar = () => {
     <div>
       <Snackbar
         open={open}
-        autoHideDuration={5000}
+        autoHideDuration={3000}
         onClose={handleClose}
         anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
       >
