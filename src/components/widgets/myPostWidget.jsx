@@ -3,8 +3,6 @@ import {
   DeleteOutlined,
   AttachFileOutlined,
   ImageOutlined,
-  MicOutlined,
-  Stop,
 } from "@mui/icons-material";
 import {
   Box,
@@ -26,7 +24,7 @@ import axios from "axios";
 import { postFile, postImg } from "../../config/firebase";
 import { setMessage } from "../../features/userSlice";
 
-const MyPostWidget = ({ picturePath }) => {
+const MyPostWidget = ({ picturePath, userId, isProfile = false }) => {
   const dispatch = useDispatch();
   // image dropzone
   const [isImage, setIsImage] = useState(false);
@@ -59,6 +57,10 @@ const MyPostWidget = ({ picturePath }) => {
         const { urlFile, fileName } = await postFile(file);
         formData.append("filePath", urlFile);
         formData.append("fileName", fileName);
+      }
+
+      if(isProfile){
+        formData.append("profileId", userId)
       }
 
       // for (const pair of formData.entries()) {

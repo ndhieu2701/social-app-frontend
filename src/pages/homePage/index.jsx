@@ -28,7 +28,7 @@ const HomePage = () => {
           flexBasis={isNonMobileScreens ? "42%" : undefined}
           mt={isNonMobileScreens ? undefined : "2rem"}
         >
-          <MyPostWidget picturePath={picturePath} />
+          <MyPostWidget picturePath={picturePath} userId={_id}/>
           <PostsWidget userId={_id} />
         </Box>
         {isNonMobileScreens && (
