@@ -14,6 +14,7 @@ const AuthPage = React.lazy(() => import("./pages/authPage"));
 const ProfilePage = React.lazy(() => import("./pages/profilePage"));
 
 import Navbar from "./components/navbar";
+import Loading from "./components/loading";
 import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 import { useSelector } from "react-redux";
 import { themeSettings } from "./theme";
@@ -29,7 +30,7 @@ function App() {
         <ThemeProvider theme={theme}>
           <Navbar />
           <CssBaseline />
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={<Loading />}>
             <Routes>
               <Route
                 path="/"

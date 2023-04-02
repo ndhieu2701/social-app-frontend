@@ -1,15 +1,17 @@
 import { Box, Typography, useTheme } from "@mui/material";
 import Friend from "../friend";
 import WidgetWrapper from "./widgetWrapper";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setFriends } from "../../features/userSlice";
 import axios from "axios";
 
 const FriendListWidget = ({ userId }) => {
+  const [userFriends, setUserFriends] = useState([])
   const dispatch = useDispatch();
   const { palette } = useTheme();
   const token = useSelector((state) => state.user.token);
+  const { _id } = useSelector(state => state.user.user)
   const friends = useSelector((state) => state.user.user.friends);
 
   const getFriends = async () => {
@@ -20,7 +22,12 @@ const FriendListWidget = ({ userId }) => {
       }
     );
     const data = await response.data;
-    dispatch(setFriends({ friends: data }));
+    if(userId === _id){
+      dispatch(setFriends({ friends: data }));
+    }
+    else {
+      setUserFriends(data)
+    }
   };
 
   useEffect(() => {
@@ -38,9 +45,18 @@ const FriendListWidget = ({ userId }) => {
         Friend List
       </Typography>
       <Box display="flex" flexDirection="column" gap="1.5rem">
-        {friends.map((friend) => (
+        {userId === _id && friends.map((friend, index) => (
           <Friend
-            key={friend._id}
+            key={index}
+            friendId={friend._id}
+            name={`${friend.firstName} ${friend.lastName}`}
+            subtitle={friend.occupation}
+            userPicturePath={friend.picturePath}
+          />
+        ))}
+        {userId !== _id && userFriends.map((friend, index) => (
+          <Friend
+            key={index}
             friendId={friend._id}
             name={`${friend.firstName} ${friend.lastName}`}
             subtitle={friend.occupation}

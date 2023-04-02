@@ -22,6 +22,7 @@ import {
 } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import { changeMode, logout } from "../../features/userSlice";
+import { setPosts } from "../../features/postSlice";
 import { useNavigate } from "react-router-dom";
 import FlexBetween from "../flexBetween";
 
@@ -108,7 +109,7 @@ const Navbar = () => {
               </IconButton>
               {/* chat box */}
               <Message sx={{ fontSize: "25px" }} />
-               {/*chat box  */}
+              {/*chat box  */}
               <Notifications sx={{ fontSize: "25px" }} />
               <Help sx={{ fontSize: "25px" }} />
               <FormControl variant="standard" value={fullName}>
@@ -132,7 +133,12 @@ const Navbar = () => {
                   <MenuItem value={fullName}>
                     <Typography>{fullName}</Typography>
                   </MenuItem>
-                  <MenuItem onClick={() => dispatch(logout())}>
+                  <MenuItem
+                    onClick={() => {
+                      dispatch(setPosts({posts: []}));
+                      dispatch(logout());
+                    }}
+                  >
                     Log Out
                   </MenuItem>
                 </Select>
@@ -211,6 +217,7 @@ const Navbar = () => {
                     </MenuItem>
                     <MenuItem
                       onClick={() => {
+                        dispatch(setPosts({posts: []}));
                         setIsMobileMenuToggled(false);
                         dispatch(logout());
                       }}

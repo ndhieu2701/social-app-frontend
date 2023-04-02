@@ -18,10 +18,16 @@ const postSlice = createSlice({
       });
       state.posts = updatedPost;
     },
+    deletePost: (state, action) => {
+      const updatedPost = state.posts.filter(
+        (post) => post._id !== action.payload
+      );
+      state.posts = updatedPost;
+    },
   },
 });
 
 //export action
-export const { setPost, setPosts } = postSlice.actions;
+export const { setPost, setPosts, deletePost } = postSlice.actions;
 
 export default postSlice.reducer;

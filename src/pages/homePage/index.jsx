@@ -1,7 +1,7 @@
 import { Box, useMediaQuery } from "@mui/material";
 import { useSelector } from "react-redux";
 import UserWidget from "../../components/widgets/userWidget";
-import MyPostWidget from "../../components/widgets/MyPostWidget";
+import MyPostWidget from "../../components/widgets/myPostWidget";
 import PostsWidget from "../../components/widgets/postsWidget";
 // import AdvertWidget from "scenes/widgets/AdvertWidget";
 import FriendListWidget from "../../components/widgets/friendListWidget";

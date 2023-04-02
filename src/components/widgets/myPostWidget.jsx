@@ -23,10 +23,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "../../features/postSlice";
 import axios from "axios";
-import {
-  postFile,
-  postImg,
-} from "../../config/firebase";
+import { postFile, postImg } from "../../config/firebase";
 import { setMessage } from "../../features/userSlice";
 
 const MyPostWidget = ({ picturePath }) => {
@@ -48,27 +45,28 @@ const MyPostWidget = ({ picturePath }) => {
 
   //post action
   const handlePost = async () => {
-    const formData = new FormData();
-    formData.append("userId", _id);
-    formData.append("description", post);
-
-    if (image) {
-      const picturePath = await postImg(image);
-      formData.append("picturePath", picturePath);
-    }
-
-    if (file) {
-      const { urlFile, fileName } = await postFile(file);
-      formData.append("filePath", urlFile);
-      formData.append("fileName", fileName);
-    }
-
-    // for (const pair of formData.entries()) {
-    //   console.log(pair[0] + ": " + pair[1]);
-    // }
     try {
+      const formData = new FormData();
+      formData.append("userId", _id);
+      formData.append("description", post);
+
+      if (image) {
+        const picturePath = await postImg(image);
+        formData.append("picturePath", picturePath);
+      }
+
+      if (file) {
+        const { urlFile, fileName } = await postFile(file);
+        formData.append("filePath", urlFile);
+        formData.append("fileName", fileName);
+      }
+
+      // for (const pair of formData.entries()) {
+      //   console.log(pair[0] + ": " + pair[1]);
+      // }
+
       const response = await axios.post(
-        `http://localhost:3001/posts`,
+        "http://localhost:3001/posts",
         formData,
         {
           headers: {
@@ -82,10 +80,12 @@ const MyPostWidget = ({ picturePath }) => {
       dispatch(setMessage({ type: "success", content: "Upload success!" }));
       dispatch(setPosts({ posts }));
     } catch (error) {
-      dispatch(setMessage({ type: "error", content: "Upload false" }));
+      dispatch(setMessage({ type: "error", content: error.message }));
     }
     setImage(null);
+    setIsImage(false);
     setFile(null);
+    setIsFile(false);
     setPost("");
   };
 

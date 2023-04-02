@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setPost } from "../../features/postSlice";
 import axios from "axios";
 import File from "../fileView";
+import PostActions from "../controlPost";
 
 const PostWidget = ({
   postId,
@@ -55,12 +56,24 @@ const PostWidget = ({
 
   return (
     <WidgetWrapper m="2rem 0">
-      <Friend
-        friendId={postUserId}
-        name={name}
-        subtitle={location}
-        userPicturePath={userPicturePath}
-      />
+      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+        <Friend
+          friendId={postUserId}
+          name={name}
+          subtitle={location}
+          userPicturePath={userPicturePath}
+        />
+        {/* menu include update post and delete post */}
+        {loggedInUserId === postUserId && (
+          <PostActions
+            id={postId}
+            description={description}
+            picturePath={picturePath}
+            fileName={fileName}
+            filePath={filePath}
+          />
+        )}
+      </Box>
       <Typography color={main} sx={{ mt: "1rem" }}>
         {description}
       </Typography>
