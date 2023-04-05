@@ -10,7 +10,7 @@ import {
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import { Formik } from "formik";
 import * as yup from "yup";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setLogin, setMessage } from "../../features/userSlice";
 import Dropzone from "react-dropzone";
@@ -25,7 +25,6 @@ const registerSchema = yup.object().shape({
   password: yup.string().required("required"),
   location: yup.string().required("required"),
   occupation: yup.string().required("required"),
-  picture: yup.string().required("required"),
 });
 
 const loginSchema = yup.object().shape({
@@ -52,7 +51,6 @@ const Form = () => {
   const [pageType, setPageType] = useState("login");
   const { palette } = useTheme();
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const isNonMobile = useMediaQuery("(min-width:600px)");
 
   const register = async (values, onSubmitProps) => {
@@ -216,7 +214,7 @@ const Form = () => {
                     {({ getRootProps, getInputProps }) => (
                       <Box
                         {...getRootProps()}
-                        border={`2px dashed ${palette.primary.main}`}
+                        // border={`2px dashed ${palette.primary.main}`}
                         p="1rem"
                         sx={{ "&:hover": { cursor: "pointer" } }}
                       >

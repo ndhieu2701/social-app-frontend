@@ -12,6 +12,7 @@ import {
 const HomePage = React.lazy(() => import("./pages/homePage"));
 const AuthPage = React.lazy(() => import("./pages/authPage"));
 const ProfilePage = React.lazy(() => import("./pages/profilePage"));
+const SettingPage = React.lazy(() => import("./pages/settingPage"));
 
 import Navbar from "./components/navbar";
 import Loading from "./components/loading";
@@ -43,6 +44,10 @@ function App() {
               <Route
                 path="/profile/:userId"
                 element={auth ? <ProfilePage /> : <Navigate to="/" />}
+              />
+              <Route
+                path="/settings"
+                element={auth ? <SettingPage /> : <Navigate to="/" />}
               />
             </Routes>
           </Suspense>

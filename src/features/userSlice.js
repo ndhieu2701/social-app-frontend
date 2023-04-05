@@ -14,13 +14,18 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    logout: () => initialState,
+    logout: (state) => {
+      (state.token = null), (state.user = null);
+    },
     changeMode: (state) => {
       state.mode = state.mode === "light" ? "dark" : "light";
     },
     setLogin: (state, action) => {
       state.user = action.payload.user;
       state.token = action.payload.token;
+    },
+    updateUser: (state, action) => {
+      state.user = action.payload.user;
     },
     setFriends: (state, action) => {
       state.user.friends = action.payload.friends;
@@ -44,6 +49,7 @@ export const {
   setFriends,
   setMessage,
   clearMessage,
+  updateUser,
 } = userSlice.actions;
 
 export default userSlice.reducer;

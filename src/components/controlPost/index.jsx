@@ -289,8 +289,8 @@ export default function PostActions({
                   <FlexBetween>
                     <Box
                       {...getRootProps()}
-                      border={`2px dashed ${palette.primary.main}`}
-                      p="1rem"
+                      // border={`2px dashed ${palette.primary.main}`}
+                      // p="1rem"
                       width="100%"
                       sx={{ "&:hover": { cursor: "pointer" } }}
                     >
@@ -352,8 +352,8 @@ export default function PostActions({
                   <FlexBetween>
                     <Box
                       {...getRootProps()}
-                      border={`2px dashed ${palette.primary.main}`}
-                      p="1rem"
+                      // border={`2px dashed ${palette.primary.main}`}
+                      // p="1rem"
                       width="100%"
                       sx={{ "&:hover": { cursor: "pointer" } }}
                     >
