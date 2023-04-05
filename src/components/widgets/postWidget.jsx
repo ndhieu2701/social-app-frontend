@@ -55,7 +55,7 @@ const PostWidget = ({
   };
 
   return (
-    <WidgetWrapper m="2rem 0">
+    <WidgetWrapper mb="2rem">
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
         <Friend
           friendId={postUserId}
