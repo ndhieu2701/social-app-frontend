@@ -43,29 +43,25 @@ const PostsWidget = ({ userId, isProfile = false }) => {
       {posts.map(
         ({
           _id,
-          userId,
-          firstName,
-          lastName,
+          user,
           description,
-          location,
           picturePath,
           filePath,
           fileName,
-          userPicturePath,
           likes,
           comments,
         }) => (
           <PostWidget
             key={_id}
             postId={_id}
-            postUserId={userId}
-            name={`${firstName} ${lastName}`}
+            postUserId={user._id}
+            name={`${user.firstName} ${user.lastName}`}
             description={description}
-            location={location}
+            location={user.location}
             picturePath={picturePath}
             filePath={filePath}
             fileName={fileName}
-            userPicturePath={userPicturePath}
+            userPicturePath={user.picturePath}
             likes={likes}
             comments={comments}
           />

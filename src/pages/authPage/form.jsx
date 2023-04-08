@@ -61,9 +61,10 @@ const Form = () => {
       formData.append(value, values[value]);
     }
 
-    const picturePath = await postImg(values.picture);
-
-    formData.append("picturePath", picturePath);
+    if (values.picture) {
+      const picturePath = await postImg(values.picture);
+      formData.append("picturePath", picturePath);
+    }
     formData.delete("picture");
 
     // for (const pair of formData.entries()) {
@@ -105,7 +106,9 @@ const Form = () => {
         }
       );
       const loggedIn = await loggedInResponse.data;
-      dispatch(setMessage({type: 'success', content: "Logged in successfully!"}))
+      dispatch(
+        setMessage({ type: "success", content: "Logged in successfully!" })
+      );
       onSubmitProps.resetForm();
       if (loggedIn) {
         dispatch(

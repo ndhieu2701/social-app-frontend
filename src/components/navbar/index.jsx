@@ -130,7 +130,7 @@ const Navbar = () => {
                   }}
                   input={<InputBase />}
                 >
-                  <MenuItem value={fullName}>
+                  <MenuItem value={fullName} onClick={() => navigate(`/profile/${user._id}`)}>
                     <Typography>{fullName}</Typography>
                   </MenuItem>
                   <MenuItem
@@ -212,7 +212,7 @@ const Navbar = () => {
                     }}
                     input={<InputBase />}
                   >
-                    <MenuItem value={fullName}>
+                    <MenuItem value={fullName} onClick={() => navigate(`/profile/${user._id}`)}>
                       <Typography>{fullName}</Typography>
                     </MenuItem>
                     <MenuItem
