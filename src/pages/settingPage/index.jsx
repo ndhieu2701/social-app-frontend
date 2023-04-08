@@ -3,6 +3,7 @@ import { Box, useMediaQuery } from "@mui/material";
 import Form from "./form";
 import { useSelector } from "react-redux";
 import SnackBar from "../../components/snackbar";
+import WidgetWrapper from "../../components/widgets/widgetWrapper";
 
 const SettingPage = () => {
   const isNonMobileScreens = useMediaQuery("(min-width:1000px)");
@@ -16,7 +17,9 @@ const SettingPage = () => {
       gap="2rem"
       justifyContent="center"
     >
-      <Form />
+      <WidgetWrapper>
+        <Form />
+      </WidgetWrapper>
       {type !== "" && <SnackBar />}
     </Box>
   );
