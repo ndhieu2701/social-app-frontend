@@ -26,6 +26,7 @@ import axios from "axios";
 import File from "../fileView";
 import PostActions from "../controlPost";
 import Comment from "../comment";
+import Loading from "../loading";
 
 const PostWidget = ({
   postId,
@@ -51,6 +52,8 @@ const PostWidget = ({
   const { palette } = useTheme();
   const main = palette.neutral.main;
   const primary = palette.primary.main;
+
+  const [loading, setLoading] = useState(false);
 
   const [isComments, setIsComments] = useState(false);
   const [parentIDs, setParentIDs] = useState([]);
@@ -109,6 +112,7 @@ const PostWidget = ({
 
   const handleOpenComment = async () => {
     setIsComments(true);
+    setLoading(true);
     // call api get comment cua post
     try {
       const response = await axios(
@@ -128,6 +132,7 @@ const PostWidget = ({
     } catch (error) {
       console.log(error);
     }
+    setLoading(false);
   };
 
   const handleOpenSubComment = async (parentCommentID) => {
@@ -232,93 +237,97 @@ const PostWidget = ({
             />
           </Box>
           <Divider />
-          <List sx={{ maxHeight: 280, overflowY: "auto" }}>
-            {comments.map(({ _id, user, content, subCommentCount }) => {
-              return (
-                <Box key={_id}>
-                  <Box
-                    sx={{ display: "flex", alignItems: "center", w: "100%" }}
-                  >
-                    <Comment
-                      postUserId={postUserId}
-                      commentID={_id}
-                      name={`${user.firstName} ${user.lastName}`}
-                      img={user.picturePath}
-                      userId={user._id}
-                      content={content}
-                      subCommentCount={subCommentCount}
-                      handleOpenSubComment={handleOpenSubComment}
-                      inParentList={parentIDs.includes(_id) ? true : false}
-                      comments={comments}
-                      setComments={setComments}
-                      parentIDs={parentIDs}
-                      setParentIDs={setParentIDs}
-                    />
-                  </Box>
-                  {parentIDs.includes(_id) && (
-                    <List mt="0.5rem">
-                      {subComments
-                        .filter((subComment) => subComment.parent === _id)
-                        .map(({ _id, user, content }) => {
-                          return (
-                            <Box
-                              sx={{
-                                pl: "1rem",
-                              }}
-                              key={_id}
-                            >
-                              <Comment
-                                postUserId={postUserId}
-                                commentID={_id}
-                                name={`${user.firstName} ${user.lastName}`}
-                                img={user.picturePath}
-                                userId={user._id}
-                                content={content}
-                                isSubComment={true}
-                                subComments={subComments}
-                                setSubComments={setSubComments}
-                              />
-                            </Box>
-                          );
-                        })}
-                      <Box
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          pl: "1rem",
-                        }}
-                      >
-                        <Avatar
-                          alt={`${you.firstName} ${you.lastName}`}
-                          src={you.picturePath}
-                        />
-                        <InputBase
-                          placeholder="Add a comment"
-                          value={focusedCommentId === _id ? subComment : ""}
-                          fullWidth
-                          onChange={(e) => setSubComment(e.target.value)}
-                          onFocus={() => setFocusedCommentId(_id)}
-                          onBlur={() => setFocusedCommentId(null)}
-                          inputProps={{ "aria-label": "Add a comment" }}
-                          endAdornment={
-                            <InputAdornment position="end">
-                              <IconButton
-                                onClick={() => handleComment(subComment, _id)}
+          {!loading ? (
+            <List sx={{ maxHeight: 280, overflowY: "auto" }}>
+              {comments.map(({ _id, user, content, subCommentCount }) => {
+                return (
+                  <Box key={_id}>
+                    <Box
+                      sx={{ display: "flex", alignItems: "center", w: "100%" }}
+                    >
+                      <Comment
+                        postUserId={postUserId}
+                        commentID={_id}
+                        name={`${user.firstName} ${user.lastName}`}
+                        img={user.picturePath}
+                        userId={user._id}
+                        content={content}
+                        subCommentCount={subCommentCount}
+                        handleOpenSubComment={handleOpenSubComment}
+                        inParentList={parentIDs.includes(_id) ? true : false}
+                        comments={comments}
+                        setComments={setComments}
+                        parentIDs={parentIDs}
+                        setParentIDs={setParentIDs}
+                      />
+                    </Box>
+                    {parentIDs.includes(_id) && (
+                      <List mt="0.5rem">
+                        {subComments
+                          .filter((subComment) => subComment.parent === _id)
+                          .map(({ _id, user, content }) => {
+                            return (
+                              <Box
+                                sx={{
+                                  pl: "1rem",
+                                }}
+                                key={_id}
                               >
-                                <SendOutlined />
-                              </IconButton>
-                            </InputAdornment>
-                          }
-                          multiline
-                          sx={{ pl: "0.4rem" }}
-                        />
-                      </Box>
-                    </List>
-                  )}
-                </Box>
-              );
-            })}
-          </List>
+                                <Comment
+                                  postUserId={postUserId}
+                                  commentID={_id}
+                                  name={`${user.firstName} ${user.lastName}`}
+                                  img={user.picturePath}
+                                  userId={user._id}
+                                  content={content}
+                                  isSubComment={true}
+                                  subComments={subComments}
+                                  setSubComments={setSubComments}
+                                />
+                              </Box>
+                            );
+                          })}
+                        <Box
+                          sx={{
+                            display: "flex",
+                            alignItems: "center",
+                            pl: "1rem",
+                          }}
+                        >
+                          <Avatar
+                            alt={`${you.firstName} ${you.lastName}`}
+                            src={you.picturePath}
+                          />
+                          <InputBase
+                            placeholder="Add a comment"
+                            value={focusedCommentId === _id ? subComment : ""}
+                            fullWidth
+                            onChange={(e) => setSubComment(e.target.value)}
+                            onFocus={() => setFocusedCommentId(_id)}
+                            onBlur={() => setFocusedCommentId(null)}
+                            inputProps={{ "aria-label": "Add a comment" }}
+                            endAdornment={
+                              <InputAdornment position="end">
+                                <IconButton
+                                  onClick={() => handleComment(subComment, _id)}
+                                >
+                                  <SendOutlined />
+                                </IconButton>
+                              </InputAdornment>
+                            }
+                            multiline
+                            sx={{ pl: "0.4rem" }}
+                          />
+                        </Box>
+                      </List>
+                    )}
+                  </Box>
+                );
+              })}
+            </List>
+          ) : (
+            <Loading />
+          )}
         </Box>
       )}
     </WidgetWrapper>
