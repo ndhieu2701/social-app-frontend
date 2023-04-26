@@ -1,9 +1,9 @@
 import { PersonAddOutlined, PersonRemoveOutlined } from "@mui/icons-material";
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
-import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setFriends } from "../../features/userSlice";
+import axios from "axios";
 import FlexBetween from "../flexBetween";
 import UserImage from "../userImage";
 
@@ -48,7 +48,7 @@ const Friend = ({ friendId, name, subtitle, userPicturePath }) => {
         <Box
           onClick={() => {
             navigate(`/profile/${friendId}`);
-            navigate(0);
+            // navigate(0);
           }}
         >
           <Typography
