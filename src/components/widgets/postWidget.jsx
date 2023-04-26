@@ -2,18 +2,30 @@ import {
   ChatBubbleOutlineOutlined,
   FavoriteBorderOutlined,
   FavoriteOutlined,
-  ShareOutlined,
+  SendOutlined,
 } from "@mui/icons-material";
-import { Box, Divider, IconButton, Typography, useTheme } from "@mui/material";
+import {
+  Avatar,
+  Box,
+  Button,
+  Divider,
+  IconButton,
+  InputAdornment,
+  InputBase,
+  List,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import FlexBetween from "../flexBetween";
 import Friend from "../friend";
 import WidgetWrapper from "../widgets/widgetWrapper";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setPost } from "../../features/postSlice";
+import { setPost, setCommentCount } from "../../features/postSlice";
 import axios from "axios";
 import File from "../fileView";
 import PostActions from "../controlPost";
+import Comment from "../comment";
 
 const PostWidget = ({
   postId,
@@ -26,11 +38,12 @@ const PostWidget = ({
   fileName,
   userPicturePath,
   likes,
-  comments,
+  commentCount,
 }) => {
-  const [isComments, setIsComments] = useState(false);
   const dispatch = useDispatch();
   const token = useSelector((state) => state.user.token);
+  const you = useSelector((state) => state.user.user);
+  const { _id } = useSelector((state) => state.user.user);
   const loggedInUserId = useSelector((state) => state.user.user._id);
   const isLiked = Boolean(likes[loggedInUserId]);
   const likeCount = Object.keys(likes).length;
@@ -38,6 +51,15 @@ const PostWidget = ({
   const { palette } = useTheme();
   const main = palette.neutral.main;
   const primary = palette.primary.main;
+
+  const [isComments, setIsComments] = useState(false);
+  const [parentIDs, setParentIDs] = useState([]);
+
+  const [comment, setComment] = useState("");
+  const [comments, setComments] = useState([]);
+  const [subComment, setSubComment] = useState("");
+  const [subComments, setSubComments] = useState([]);
+  const [focusedCommentId, setFocusedCommentId] = useState(null);
 
   const patchLike = async () => {
     const response = await axios.patch(
@@ -52,6 +74,79 @@ const PostWidget = ({
     );
     const updatedPost = await response.data;
     dispatch(setPost({ post: updatedPost }));
+  };
+
+  const handleComment = async (value, parent) => {
+    //call api create comment
+    const formData = new FormData();
+    formData.append("user", _id);
+    formData.append("content", value);
+    if (parent) formData.append("parent", parent);
+    formData.append("post", postId);
+
+    const response = await axios.post(
+      "http://localhost:3001/comments",
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const newComment = await response.data;
+    if (!parent) {
+      setComments([...comments, newComment]);
+      setComment("");
+    }
+    if (parent) {
+      setSubComments([...subComments, newComment]);
+      setSubComment("");
+    }
+    dispatch(setCommentCount({ id: postId }));
+  };
+
+  const handleOpenComment = async () => {
+    setIsComments(true);
+    // call api get comment cua post
+    try {
+      const response = await axios(
+        `http://localhost:3001/comments/post/${postId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const commentsData = await response.data;
+      const comments = commentsData.filter(
+        (comment) => comment.parent === null
+      );
+      setComments(comments);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleOpenSubComment = async (parentCommentID) => {
+    setParentIDs([...parentIDs, parentCommentID]);
+    try {
+      const response = await axios(
+        `http://localhost:3001/comments/parent/${parentCommentID}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const subCommmentsData = await response.data;
+      setSubComments(subComments.concat(subCommmentsData));
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -101,28 +196,129 @@ const PostWidget = ({
           </FlexBetween>
 
           <FlexBetween gap="0.3rem">
-            <IconButton onClick={() => setIsComments(!isComments)}>
+            <IconButton onClick={!isComments ? handleOpenComment : () => {}}>
               <ChatBubbleOutlineOutlined />
             </IconButton>
-            <Typography>{comments.length}</Typography>
+            <Typography>{commentCount}</Typography>
           </FlexBetween>
         </FlexBetween>
-
-        <IconButton>
-          <ShareOutlined />
-        </IconButton>
       </FlexBetween>
+      <Divider />
       {isComments && (
         <Box mt="0.5rem">
-          {comments.map((comment, i) => (
-            <Box key={`${name}-${i}`}>
-              <Divider />
-              <Typography sx={{ color: main, m: "0.5rem 0", pl: "1rem" }}>
-                {comment}
-              </Typography>
-            </Box>
-          ))}
+          <Box
+            sx={{ margin: "0.5rem 0", display: "flex", alignItems: "center" }}
+          >
+            <Avatar
+              alt={`${you.firstName} ${you.lastName}`}
+              src={you.picturePath}
+            />
+            <InputBase
+              placeholder="Add a comment"
+              fullWidth
+              color={main}
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              inputProps={{ "aria-label": "Add a comment" }}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton onClick={() => handleComment(comment)}>
+                    <SendOutlined />
+                  </IconButton>
+                </InputAdornment>
+              }
+              multiline
+              sx={{ pl: "0.8rem" }}
+            />
+          </Box>
           <Divider />
+          <List sx={{ maxHeight: 280, overflowY: "auto" }}>
+            {comments.map(({ _id, user, content, subCommentCount }) => {
+              return (
+                <Box key={_id}>
+                  <Box
+                    sx={{ display: "flex", alignItems: "center", w: "100%" }}
+                  >
+                    <Comment
+                      postUserId={postUserId}
+                      commentID={_id}
+                      name={`${user.firstName} ${user.lastName}`}
+                      img={user.picturePath}
+                      userId={user._id}
+                      content={content}
+                      subCommentCount={subCommentCount}
+                      handleOpenSubComment={handleOpenSubComment}
+                      inParentList={parentIDs.includes(_id) ? true : false}
+                      comments={comments}
+                      setComments={setComments}
+                      parentIDs={parentIDs}
+                      setParentIDs={setParentIDs}
+                    />
+                  </Box>
+                  {parentIDs.includes(_id) && (
+                    <List mt="0.5rem">
+                      {subComments
+                        .filter((subComment) => subComment.parent === _id)
+                        .map(({ _id, user, content }) => {
+                          return (
+                            <Box
+                              sx={{
+                                pl: "1rem",
+                              }}
+                              key={_id}
+                            >
+                              <Comment
+                                postUserId={postUserId}
+                                commentID={_id}
+                                name={`${user.firstName} ${user.lastName}`}
+                                img={user.picturePath}
+                                userId={user._id}
+                                content={content}
+                                isSubComment={true}
+                                subComments={subComments}
+                                setSubComments={setSubComments}
+                              />
+                            </Box>
+                          );
+                        })}
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          pl: "1rem",
+                        }}
+                      >
+                        <Avatar
+                          alt={`${you.firstName} ${you.lastName}`}
+                          src={you.picturePath}
+                        />
+                        <InputBase
+                          placeholder="Add a comment"
+                          value={focusedCommentId === _id ? subComment : ""}
+                          fullWidth
+                          onChange={(e) => setSubComment(e.target.value)}
+                          onFocus={() => setFocusedCommentId(_id)}
+                          onBlur={() => setFocusedCommentId(null)}
+                          inputProps={{ "aria-label": "Add a comment" }}
+                          endAdornment={
+                            <InputAdornment position="end">
+                              <IconButton
+                                onClick={() => handleComment(subComment, _id)}
+                              >
+                                <SendOutlined />
+                              </IconButton>
+                            </InputAdornment>
+                          }
+                          multiline
+                          sx={{ pl: "0.4rem" }}
+                        />
+                      </Box>
+                    </List>
+                  )}
+                </Box>
+              );
+            })}
+          </List>
         </Box>
       )}
     </WidgetWrapper>

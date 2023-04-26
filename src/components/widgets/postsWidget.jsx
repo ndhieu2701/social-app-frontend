@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setPosts } from "../../features/postSlice";
 import PostWidget from "./postWidget";
+import { Typography, useTheme } from "@mui/material";
 
 const PostsWidget = ({ userId, isProfile = false }) => {
   const dispatch = useDispatch();
@@ -37,9 +38,12 @@ const PostsWidget = ({ userId, isProfile = false }) => {
     } else {
       getPosts();
     }
-  }, []);
+  }, [userId]);
   return (
     <>
+      {Array.isArray(posts) && posts.length === 0 && (
+        <Typography variant="h2">Nothing to see</Typography>
+      )}
       {posts.map(
         ({
           _id,
@@ -49,7 +53,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
           filePath,
           fileName,
           likes,
-          comments,
+          commentCount,
         }) => (
           <PostWidget
             key={_id}
@@ -63,7 +67,7 @@ const PostsWidget = ({ userId, isProfile = false }) => {
             fileName={fileName}
             userPicturePath={user.picturePath}
             likes={likes}
-            comments={comments}
+            commentCount={commentCount}
           />
         )
       )}
