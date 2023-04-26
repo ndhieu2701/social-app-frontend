@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const UserWidget = ({ userId, picturePath }) => {
+const UserWidget = ({ userId}) => {
   const [user, setUser] = useState(null);
   const { _id } = useSelector((state) => state.user.user);
   const { palette } = useTheme();
@@ -32,7 +32,7 @@ const UserWidget = ({ userId, picturePath }) => {
 
   useEffect(() => {
     getUser();
-  }, []);
+  }, [userId]);
 
   if (!user) return null;
 
@@ -43,7 +43,7 @@ const UserWidget = ({ userId, picturePath }) => {
       {/* FIRST ROW */}
       <FlexBetween gap="0.5rem" pb="1.1rem">
         <FlexBetween gap="1rem" onClick={() => navigate(`/profile/${userId}`)}>
-          <UserImage image={picturePath} />
+          <UserImage image={user.picturePath} />
           <Box>
             <Typography
               variant="h4"
