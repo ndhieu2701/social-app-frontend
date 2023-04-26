@@ -11,7 +11,6 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import {
-  Search,
   Message,
   DarkMode,
   LightMode,
@@ -25,6 +24,7 @@ import { changeMode, logout } from "../../features/userSlice";
 import { setPosts } from "../../features/postSlice";
 import { useNavigate } from "react-router-dom";
 import FlexBetween from "../flexBetween";
+import SearchComponent from "../search";
 
 const Navbar = () => {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
@@ -82,19 +82,7 @@ const Navbar = () => {
             >
               Face Lite
             </Typography>
-            {isNonMobileScreens && (
-              <FlexBetween
-                backgroundColor={neutralLight}
-                borderRadius="9px"
-                gap="3rem"
-                padding="0.1rem 1.5rem"
-              >
-                <InputBase placeholder="Search..." />
-                <IconButton>
-                  <Search />
-                </IconButton>
-              </FlexBetween>
-            )}
+            {isNonMobileScreens && <SearchComponent />}
           </FlexBetween>
 
           {/* DESKTOP NAV */}
@@ -111,7 +99,6 @@ const Navbar = () => {
               <Message sx={{ fontSize: "25px" }} />
               {/*chat box  */}
               <Notifications sx={{ fontSize: "25px" }} />
-              <Help sx={{ fontSize: "25px" }} />
               <FormControl variant="standard" value={fullName}>
                 <Select
                   value={fullName}
@@ -120,6 +107,7 @@ const Navbar = () => {
                     width: "150px",
                     borderRadius: "0.25rem",
                     p: "0.25rem 1rem",
+                    pr: "2.4rem",
                     "& .MuiSvgIcon-root": {
                       pr: "0.25rem",
                       width: "3rem",
@@ -130,12 +118,15 @@ const Navbar = () => {
                   }}
                   input={<InputBase />}
                 >
-                  <MenuItem value={fullName} onClick={() => navigate(`/profile/${user._id}`)}>
+                  <MenuItem
+                    value={fullName}
+                    onClick={() => navigate(`/profile/${user.user._id}`)}
+                  >
                     <Typography>{fullName}</Typography>
                   </MenuItem>
                   <MenuItem
                     onClick={() => {
-                      dispatch(setPosts({posts: []}));
+                      dispatch(setPosts({ posts: [] }));
                       dispatch(logout());
                     }}
                   >
@@ -193,7 +184,6 @@ const Navbar = () => {
                 </IconButton>
                 <Message sx={{ fontSize: "25px" }} />
                 <Notifications sx={{ fontSize: "25px" }} />
-                <Help sx={{ fontSize: "25px" }} />
                 <FormControl variant="standard" value={fullName}>
                   <Select
                     value={fullName}
@@ -212,12 +202,15 @@ const Navbar = () => {
                     }}
                     input={<InputBase />}
                   >
-                    <MenuItem value={fullName} onClick={() => navigate(`/profile/${user._id}`)}>
+                    <MenuItem
+                      value={fullName}
+                      onClick={() => navigate(`/profile/${user._id}`)}
+                    >
                       <Typography>{fullName}</Typography>
                     </MenuItem>
                     <MenuItem
                       onClick={() => {
-                        dispatch(setPosts({posts: []}));
+                        dispatch(setPosts({ posts: [] }));
                         setIsMobileMenuToggled(false);
                         dispatch(logout());
                       }}
