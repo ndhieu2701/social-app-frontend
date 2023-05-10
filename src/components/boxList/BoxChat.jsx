@@ -111,6 +111,30 @@ const BoxChat = ({ chat }) => {
       }
     }
   };
+
+  const typingHandler = (e) => {
+    setNewMessage(e.target.value);
+
+    if (!socketConnected) return;
+
+    if (!typing) {
+      setTyping(true);
+      socket.emit("typing", selectedChat._id);
+    }
+
+    var lastTyping = new Date().getTime();
+    var timerLenght = 3000;
+
+    setTimeout(() => {
+      var timeNow = new Date().getTime();
+      var timeDiff = timeNow - lastTyping;
+
+      if (timeDiff >= timerLenght && typing) {
+        socket.emit("stop typing", selectedChat._id);
+        setTyping(false);
+      }
+    }, timerLenght);
+  };
   return (
     <Box
       sx={{
@@ -175,12 +199,13 @@ const BoxChat = ({ chat }) => {
             sx={{ width: "100%", borderTop: "1px solid #ccc" }}
             onKeyDown={(event) => handleSendMessage(event)}
           >
+            {isTyping && <Box sx={{ width: "100%" }}> ... </Box>}
             <Input
               fullWidth
               sx={{ padding: "2px 8px" }}
               placeholder="Enter new message"
               value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
+              onChange={(e) => typingHandler(e)}
             />
           </Box>
         </>
