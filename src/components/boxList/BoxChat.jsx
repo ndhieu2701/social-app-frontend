@@ -25,6 +25,7 @@ const BoxChat = ({ chat }) => {
   const [newMessage, setNewMessage] = useState("");
   const [socketConnected, setSocketConnected] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+  const [typing, setTyping] = useState(false);
 
   const END_POINT = "http://localhost:3001";
 
@@ -117,8 +118,8 @@ const BoxChat = ({ chat }) => {
 
     if (!socketConnected) return;
 
-    if (!isTyping) {
-      setIsTyping(true);
+    if (!typing) {
+      setTyping(true);
       socket.emit("typing", selectedChat);
     }
 
@@ -129,9 +130,9 @@ const BoxChat = ({ chat }) => {
       var timeNow = new Date().getTime();
       var timeDiff = timeNow - lastTyping;
 
-      if (timeDiff >= timerLenght && isTyping) {
+      if (timeDiff >= timerLenght && typing) {
         socket.emit("stop typing", selectedChat);
-        setIsTyping(false);
+        setTyping(false);
       }
     }, timerLenght);
   };
