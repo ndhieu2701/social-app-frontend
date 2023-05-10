@@ -11,8 +11,9 @@ import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import ChatBtn from "../chatBtn";
 
-const UserWidget = ({ userId}) => {
+const UserWidget = ({ userId }) => {
   const [user, setUser] = useState(null);
   const { _id } = useSelector((state) => state.user.user);
   const { palette } = useTheme();
@@ -66,6 +67,7 @@ const UserWidget = ({ userId}) => {
             <ManageAccountsOutlined />
           </IconButton>
         )}
+        {userId !== _id && <ChatBtn userId={userId} token={token} />}
       </FlexBetween>
 
       <Divider />

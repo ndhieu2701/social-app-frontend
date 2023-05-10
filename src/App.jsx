@@ -19,11 +19,13 @@ import Loading from "./components/loading";
 import { createTheme, CssBaseline, ThemeProvider } from "@mui/material";
 import { useSelector } from "react-redux";
 import { themeSettings } from "./theme";
+import BoxList from "./components/boxList";
 
 function App() {
   const mode = useSelector((state) => state.user.mode);
   const theme = useMemo(() => createTheme(themeSettings(mode)), [mode]);
   const auth = Boolean(useSelector((state) => state.user.token));
+  const chatOpen = useSelector((state) => state.chat.chatOpen);
 
   return (
     <div className="app">
@@ -51,6 +53,7 @@ function App() {
               />
             </Routes>
           </Suspense>
+          {chatOpen.length !== 0 && <BoxList chatOpen={chatOpen} />}
         </ThemeProvider>
       </Router>
     </div>

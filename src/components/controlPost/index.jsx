@@ -120,7 +120,6 @@ export default function PostActions({
       const updatedPost = await response.data;
       dispatch(setMessage({ type: "success", content: "Update success!" }));
       dispatch(setPost({ post: updatedPost }));
-
       setImage(null);
       setNewPicturePath(updatedPost.picturePath);
       setFile(null);
@@ -161,15 +160,11 @@ export default function PostActions({
   const handleEditModalClose = () => {
     setIsEditModalOpen(false);
     setNewDescription(description);
-    if (picturePath) {
-      setImage(null);
-      setNewPicturePath(picturePath);
-    }
-    if (filePath) {
-      setFile(null);
-      setNewFileName(fileName);
-      setNewFilePath(filePath);
-    }
+    setImage(null);
+    setNewPicturePath(picturePath);
+    setFile(null);
+    setNewFileName(fileName);
+    setNewFilePath(filePath);
   };
 
   return (
@@ -291,7 +286,7 @@ export default function PostActions({
                       {...getRootProps()}
                       // border={`2px dashed ${palette.primary.main}`}
                       // p="1rem"
-                      width="100%"
+                      width="90%"
                       sx={{ "&:hover": { cursor: "pointer" } }}
                     >
                       <input {...getInputProps()} />
@@ -299,16 +294,21 @@ export default function PostActions({
                         <p>Add image here or not</p>
                       ) : (
                         <FlexBetween>
-                          <Typography>{image.name}</Typography>
+                          <Typography
+                            sx={{
+                              width: "85%",
+                              textOverflow: "ellipsis",
+                              wordWrap: "break-word",
+                            }}
+                          >
+                            {image.name}
+                          </Typography>
                           <EditOutlined />
                         </FlexBetween>
                       )}
                     </Box>
                     {image && (
-                      <IconButton
-                        onClick={() => setImage(null)}
-                        sx={{ width: "15%" }}
-                      >
+                      <IconButton onClick={() => setImage(null)}>
                         <DeleteOutlined />
                       </IconButton>
                     )}

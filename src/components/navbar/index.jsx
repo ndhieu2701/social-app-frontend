@@ -22,9 +22,11 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { changeMode, logout } from "../../features/userSlice";
 import { setPosts } from "../../features/postSlice";
+import { clearChats } from "../../features/chatSlice";
 import { useNavigate } from "react-router-dom";
 import FlexBetween from "../flexBetween";
 import SearchComponent from "../search";
+import ListChat from "../listChat";
 
 const Navbar = () => {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
@@ -96,7 +98,7 @@ const Navbar = () => {
                 )}
               </IconButton>
               {/* chat box */}
-              <Message sx={{ fontSize: "25px" }} />
+              <ListChat />
               {/*chat box  */}
               <Notifications sx={{ fontSize: "25px" }} />
               <FormControl variant="standard" value={fullName}>
@@ -127,6 +129,7 @@ const Navbar = () => {
                   <MenuItem
                     onClick={() => {
                       dispatch(setPosts({ posts: [] }));
+                      dispatch(clearChats());
                       dispatch(logout());
                     }}
                   >
@@ -211,6 +214,7 @@ const Navbar = () => {
                     <MenuItem
                       onClick={() => {
                         dispatch(setPosts({ posts: [] }));
+
                         setIsMobileMenuToggled(false);
                         dispatch(logout());
                       }}
