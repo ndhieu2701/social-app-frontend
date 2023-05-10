@@ -9,7 +9,7 @@ import axios from "axios";
 import ScrollChat from "./ScrollChat";
 import io from "socket.io-client";
 
-var socket;
+var socket, selectedChatCompare;
 
 const BoxChat = ({ chat }) => {
   const theme = useTheme();
@@ -40,12 +40,13 @@ const BoxChat = ({ chat }) => {
   useEffect(() => {
     socket.on("message recieved", (newMessageRecieved) => {
       if (
-        !selectedChat || // if chat is not selected or doesn't match current chat
-        selectedChat !== newMessageRecieved.chat._id
+        !selectedChatCompare || // if chat is not selected or doesn't match current chat
+        selectedChatCompare !== newMessageRecieved.chat._id
       ) {
         // if (!notification.includes(newMessageRecieved)) {
         //   setNotification([newMessageRecieved, ...notification]);
         dispatch(fetchChat(!fetchChatType));
+        console.log("hehe");
         // }
       } else {
         setMessages([...messages, newMessageRecieved]);
@@ -55,7 +56,8 @@ const BoxChat = ({ chat }) => {
 
   useEffect(() => {
     fetchMessages();
-  }, [selectedChat]);
+    selectedChatCompare = selectedChat
+  }, [selectedChat, fetchChatType]);
 
   const fetchMessages = async () => {
     if (!selectedChat) return;
