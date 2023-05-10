@@ -27,7 +27,7 @@ const BoxChat = ({ chat }) => {
   const [isTyping, setIsTyping] = useState(false);
   const [typing, setTyping] = useState(false);
 
-  const END_POINT = "http://localhost:3001";
+  const END_POINT = "http://192.168.238.10:3001";
 
   useEffect(() => {
     socket = io(END_POINT);
@@ -39,24 +39,24 @@ const BoxChat = ({ chat }) => {
 
   useEffect(() => {
     socket.on("message recieved", (newMessageRecieved) => {
-      if (
-        !selectedChatCompare || // if chat is not selected or doesn't match current chat
-        selectedChatCompare !== newMessageRecieved.chat._id
-      ) {
-        // if (!notification.includes(newMessageRecieved)) {
-        //   setNotification([newMessageRecieved, ...notification]);
-        dispatch(fetchChat(!fetchChatType));
-        console.log("hehe");
-        // }
-      } else {
-        setMessages([...messages, newMessageRecieved]);
-      }
+      // if (
+      //   !selectedChatCompare || // if chat is not selected or doesn't match current chat
+      //   selectedChatCompare !== newMessageRecieved.chat._id
+      // ) {
+      //   // if (!notification.includes(newMessageRecieved)) {
+      //   //   setNotification([newMessageRecieved, ...notification]);
+      //   dispatch(fetchChat(!fetchChatType));
+      //   // }
+      // } else {
+      //   setMessages([...messages, newMessageRecieved]);
+      // }
+      setMessages([...messages, newMessageRecieved]);
     });
   });
 
   useEffect(() => {
     fetchMessages();
-    selectedChatCompare = selectedChat
+    selectedChatCompare = selectedChat;
   }, [selectedChat, fetchChatType]);
 
   const fetchMessages = async () => {
