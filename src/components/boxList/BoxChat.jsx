@@ -117,9 +117,9 @@ const BoxChat = ({ chat }) => {
 
     if (!socketConnected) return;
 
-    if (!typing) {
-      setTyping(true);
-      socket.emit("typing", selectedChat._id);
+    if (!isTyping) {
+      setIsTyping(true);
+      socket.emit("typing", selectedChat);
     }
 
     var lastTyping = new Date().getTime();
@@ -129,9 +129,9 @@ const BoxChat = ({ chat }) => {
       var timeNow = new Date().getTime();
       var timeDiff = timeNow - lastTyping;
 
-      if (timeDiff >= timerLenght && typing) {
-        socket.emit("stop typing", selectedChat._id);
-        setTyping(false);
+      if (timeDiff >= timerLenght && isTyping) {
+        socket.emit("stop typing", selectedChat);
+        setIsTyping(false);
       }
     }, timerLenght);
   };
