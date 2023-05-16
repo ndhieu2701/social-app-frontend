@@ -11,7 +11,6 @@ const BoxList = ({ chatOpen }) => {
         right: "20px",
         display: "flex",
         alignItems: "center",
-        maxWidth: "600px",
       }}
     >
       <BoxChat chat={chatOpen} />

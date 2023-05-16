@@ -126,7 +126,7 @@ export default function PostActions({
       setNewFileName(updatedPost.fileName);
       setNewFilePath(updatedPost.filePath);
     } catch (error) {
-      dispatch(setMessage({ type: "error", content: error.message }));
+      dispatch(setMessage({ type: "error", content: error.response.data }));
     }
     setIsEditModalOpen(false);
   };
@@ -149,7 +149,7 @@ export default function PostActions({
       dispatch(setMessage({ type: "success", content: "Delete sucess!" }));
       setIsDeleteModalOpen(false);
     } catch (error) {
-      dispatch(setMessage({ type: "error", content: error.message }));
+      dispatch(setMessage({ type: "error", content: error.response.data }));
     }
   };
 

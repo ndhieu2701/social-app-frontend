@@ -108,7 +108,7 @@ const Comment = ({
       setUpdateComment(false);
       dispatch(setMessage({ type: "success", content: "Update success!" }));
     } catch (error) {
-      dispatch(setMessage({ type: "error", content: error.message }));
+      dispatch(setMessage({ type: "error", content: error.response.data }));
     }
   };
 
@@ -134,7 +134,7 @@ const Comment = ({
       }
       dispatch(setMessage({ type: "success", content: "Delete success!" }));
     } catch (error) {
-      dispatch(setMessage({ type: "error", content: error.message }));
+      dispatch(setMessage({ type: "error", content: error.response.data }));
     }
   };
 

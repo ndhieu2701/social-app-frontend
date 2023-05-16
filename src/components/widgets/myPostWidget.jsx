@@ -82,7 +82,7 @@ const MyPostWidget = ({ picturePath, userId, isProfile = false }) => {
       dispatch(setMessage({ type: "success", content: "Upload success!" }));
       dispatch(setPosts({ posts }));
     } catch (error) {
-      dispatch(setMessage({ type: "error", content: error.message }));
+      dispatch(setMessage({ type: "error", content: error.response.data }));
     }
     setImage(null);
     setIsImage(false);

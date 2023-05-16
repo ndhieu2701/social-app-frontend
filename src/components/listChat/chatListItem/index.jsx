@@ -2,15 +2,29 @@ import { Avatar, Box, MenuItem, Typography, useTheme } from "@mui/material";
 import React from "react";
 import { getSender } from "../../../config/ChatLogics";
 import { useDispatch, useSelector } from "react-redux";
-import { setBoxChatOpen } from "../../../features/chatSlice";
+import { removeChatUnread, setBoxChatOpen } from "../../../features/chatSlice";
+import { changeChatCount } from "../../../features/notificationSlice";
 
-const ChatListItem = ({ chatID, chatName, latestMessage, users, closeMenu, isGroupChat }) => {
+const ChatListItem = ({
+  chatID,
+  chatName,
+  latestMessage,
+  users,
+  closeMenu,
+  isGroupChat,
+}) => {
   const theme = useTheme();
   const main = theme.palette.neutral.main;
   const loginUser = useSelector((state) => state.user.user);
   const dispatch = useDispatch();
+  const chatUnread = useSelector(state => state.chat.chatUnread)
 
   const handleOpenBoxChat = () => {
+    const isUnread = Boolean(chatUnread.includes(chatID))
+    if(isUnread){
+      dispatch(removeChatUnread(chatID))
+      dispatch(changeChatCount(chatID))
+    }
     dispatch(setBoxChatOpen(chatID));
     closeMenu();
   };
@@ -34,7 +48,7 @@ const ChatListItem = ({ chatID, chatName, latestMessage, users, closeMenu, isGro
           textOverflow: " ellipsis",
         }}
       >
-        {!isGroupChat ? getSender(loginUser, users) : chatName}
+        {isGroupChat ? chatName : getSender(loginUser, users)}
       </Typography>
       {!latestMessage && (
         <Typography
@@ -51,16 +65,32 @@ const ChatListItem = ({ chatID, chatName, latestMessage, users, closeMenu, isGro
         </Typography>
       )}
       {latestMessage && (
-        <Box sx={{ display: "flex", alignItems: "center" }}>
+        <Box sx={{ display: "flex", alignItems: "center", width: "100%" }}>
           <Avatar
             src={latestMessage.sender.picturePath}
             sx={{ width: "20px", height: "20px" }}
           />
 
-          <Typography variant="subtitle1">
+          <Typography
+            variant="subtitle1"
+            sx={{
+              maxWidth: "40%",
+              whiteSpace: "nowrap",
+              textOverflow: "ellipsis",
+              overflow: "hidden",
+            }}
+          >
             {latestMessage.sender.firstName} {latestMessage.sender.lastName}:
           </Typography>
-          <Typography variant="subtitle1">
+          <Typography
+            variant="subtitle1"
+            sx={{
+              maxWidth: "50%",
+              whiteSpace: "nowrap",
+              textOverflow: "ellipsis",
+              overflow: "hidden",
+            }}
+          >
             {` ${latestMessage.content}`}
           </Typography>
         </Box>

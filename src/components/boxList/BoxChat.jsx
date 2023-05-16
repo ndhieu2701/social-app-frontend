@@ -3,13 +3,14 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getSender } from "../../config/ChatLogics";
 import { Minimize, Add, Close } from "@mui/icons-material";
-import { removeOpenChat } from "../../features/chatSlice";
+import {
+  addMessage,
+  removeOpenChat,
+  setMessages,
+} from "../../features/chatSlice";
 import { fetchChat } from "../../features/chatSlice";
 import axios from "axios";
 import ScrollChat from "./ScrollChat";
-import io from "socket.io-client";
-
-var socket, selectedChatCompare;
 
 const BoxChat = ({ chat }) => {
   const theme = useTheme();
@@ -18,46 +19,15 @@ const BoxChat = ({ chat }) => {
   const token = useSelector((state) => state.user.token);
   const selectedChat = useSelector((state) => state.chat.selectedChat);
   const fetchChatType = useSelector((state) => state.chat.fetchChat);
+  const socket = useSelector(state => state.socket.socket)
   const dispatch = useDispatch();
   const [isMini, setIsMini] = useState(false);
 
-  const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
-  const [socketConnected, setSocketConnected] = useState(false);
-  const [isTyping, setIsTyping] = useState(false);
-  const [typing, setTyping] = useState(false);
-
-  const END_POINT = "http://192.168.238.10:3001";
-
-  useEffect(() => {
-    socket = io(END_POINT);
-    socket.emit("setup", loginUser);
-    socket.on("connected", () => setSocketConnected(true));
-    socket.on("typing", () => setIsTyping(true));
-    socket.on("stop typing", () => setIsTyping(false));
-  }, []);
-
-  useEffect(() => {
-    socket.on("message recieved", (newMessageRecieved) => {
-      // if (
-      //   !selectedChatCompare || // if chat is not selected or doesn't match current chat
-      //   selectedChatCompare !== newMessageRecieved.chat._id
-      // ) {
-      //   // if (!notification.includes(newMessageRecieved)) {
-      //   //   setNotification([newMessageRecieved, ...notification]);
-      //   dispatch(fetchChat(!fetchChatType));
-      //   // }
-      // } else {
-      //   setMessages([...messages, newMessageRecieved]);
-      // }
-      setMessages([...messages, newMessageRecieved]);
-    });
-  });
 
   useEffect(() => {
     fetchMessages();
-    selectedChatCompare = selectedChat;
-  }, [selectedChat, fetchChatType]);
+  }, [selectedChat]);
 
   const fetchMessages = async () => {
     if (!selectedChat) return;
@@ -72,7 +42,7 @@ const BoxChat = ({ chat }) => {
         `http://localhost:3001/message/${selectedChat}`,
         config
       );
-      setMessages(data);
+      dispatch(setMessages(data));
       socket.emit("join chat", selectedChat);
     } catch (error) {
       console.log(error);
@@ -88,7 +58,6 @@ const BoxChat = ({ chat }) => {
   };
 
   const handleSendMessage = async (event) => {
-    socket.emit("stop typing", chat._id);
     if (event.key === "Enter" && newMessage) {
       try {
         const res = await axios.post(
@@ -108,36 +77,17 @@ const BoxChat = ({ chat }) => {
         setNewMessage("");
         socket.emit("new message", messageRes);
         dispatch(fetchChat(!fetchChatType));
-        setMessages([...messages, messageRes]);
+        dispatch(addMessage(messageRes));
       } catch (error) {
-        console.log(error);
+        console.log(error.response.data);
       }
     }
   };
 
   const typingHandler = (e) => {
     setNewMessage(e.target.value);
-
-    if (!socketConnected) return;
-
-    if (!typing) {
-      setTyping(true);
-      socket.emit("typing", selectedChat);
-    }
-
-    var lastTyping = new Date().getTime();
-    var timerLenght = 3000;
-
-    setTimeout(() => {
-      var timeNow = new Date().getTime();
-      var timeDiff = timeNow - lastTyping;
-
-      if (timeDiff >= timerLenght && typing) {
-        socket.emit("stop typing", selectedChat);
-        setTyping(false);
-      }
-    }, timerLenght);
   };
+
   return (
     <Box
       sx={{
@@ -160,10 +110,10 @@ const BoxChat = ({ chat }) => {
         sx={{
           borderTopLeftRadius: "10px",
           borderTopRightRadius: "10px",
-          borderBottom: "1px solid #ccc",
           display: "flex",
           alignItems: "center",
           border: isMini ? "1px solid #ccc" : "none",
+          borderBottom: "1px solid #ccc",
           justifyContent: "space-between",
           padding: "2px 6px",
           height: "2rem",
@@ -182,7 +132,7 @@ const BoxChat = ({ chat }) => {
             textOverflow: " ellipsis",
           }}
         >
-          {getSender(loginUser, chat.users)}
+          {chat.isGroupChat ? chat.chatName : getSender(loginUser, chat.users)}
         </Typography>
         <Box>
           <IconButton onClick={handleMiniChat}>
@@ -196,13 +146,12 @@ const BoxChat = ({ chat }) => {
       {!isMini && (
         <>
           {/* message show */}
-          <ScrollChat messages={messages} />
+          <ScrollChat />
           {/* message input */}
           <Box
             sx={{ width: "100%", borderTop: "1px solid #ccc" }}
             onKeyDown={(event) => handleSendMessage(event)}
           >
-            {isTyping && <Box sx={{ width: "100%" }}> ... </Box>}
             <Input
               fullWidth
               sx={{ padding: "2px 8px" }}

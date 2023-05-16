@@ -5,6 +5,8 @@ const initialState = {
   selectedChat: "",
   chats: [],
   chatOpen: [],
+  messages: [],
+  chatUnread: [],
 };
 
 const chatSlice = createSlice({
@@ -55,6 +57,24 @@ const chatSlice = createSlice({
     fetchChat: (state, action) => {
       state.fetchChat = action.payload;
     },
+    setMessages: (state, action) => {
+      state.messages = action.payload;
+    },
+    addMessage: (state, action) => {
+      state.messages = [...state.messages, action.payload];
+    },
+    setChatUnread: (state, action) => {
+      const isExist = state.chatUnread.findIndex(
+        (chat) => chat === action.payload
+      );
+      if (isExist === -1) state.chatUnread.push(action.payload);
+    },
+    removeChatUnread: (state, action) => {
+      const newChatUnread = state.chatUnread.filter(
+        (chat) => chat !== action.payload
+      );
+      state.chatUnread = newChatUnread;
+    },
   },
 });
 
@@ -67,6 +87,10 @@ export const {
   clearChats,
   removeOpenChat,
   fetchChat,
+  setMessages,
+  addMessage,
+  setChatUnread,
+  removeChatUnread,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

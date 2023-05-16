@@ -8,9 +8,10 @@ import {
   isSameUser,
 } from "../../config/ChatLogics";
 
-const ScrollChat = ({ messages }) => {
+const ScrollChat = () => {
   const scrollRef = useRef();
   const user = useSelector((state) => state.user.user);
+  const messages = useSelector((state) => state.chat.messages);
   const theme = useTheme();
   const main = theme.palette.primary.main;
   const second = theme.palette.secondary.main;
@@ -30,7 +31,7 @@ const ScrollChat = ({ messages }) => {
         messages.map((m, i) => {
           return (
             <div
-              style={{ display: "flex", alignItems: "center" }}
+              style={{ display: "flex", alignItems: "center", width: "100%" }}
               key={m._id}
               ref={scrollRef}
             >
@@ -52,6 +53,7 @@ const ScrollChat = ({ messages }) => {
                   borderRadius: "20px",
                   padding: "5px 15px",
                   maxWidth: "75%",
+                  wordWrap: "break-word",
                 }}
               >
                 {m.content}

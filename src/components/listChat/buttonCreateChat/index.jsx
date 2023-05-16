@@ -38,7 +38,7 @@ const ButtonCreateChat = () => {
       const data = await response.data;
       setSearchData(data);
     } catch (error) {
-      console.log(error.message);
+      console.log(error.response.data);
     }
   };
 
@@ -71,7 +71,7 @@ const ButtonCreateChat = () => {
       handleClose();
       dispatch(setChat({ chat: data }));
     } catch (error) {
-      dispatch(setMessage({ type: "error", content: error.message }));
+      dispatch(setMessage({ type: "error", content: error.response.data }));
     }
   };
 

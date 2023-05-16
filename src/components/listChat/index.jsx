@@ -1,5 +1,6 @@
 import { Message } from "@mui/icons-material";
 import {
+  Badge,
   Box,
   Divider,
   IconButton,
@@ -11,19 +12,30 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ChatListItem from "./chatListItem";
 import axios from "axios";
-import { setChats } from "../../features/chatSlice";
+import { setChats, fetchChat, addMessage, setChatUnread } from "../../features/chatSlice";
 import ButtonCreateChat from "./buttonCreateChat";
+import io from "socket.io-client";
+import { addChatNoti } from "../../features/notificationSlice";
+import { setSocket } from "../../features/socketSlice";
 
 const ListChat = () => {
   const theme = useTheme();
   const dark = theme.palette.neutral.dark;
   const token = useSelector((state) => state.user.token);
   const { _id } = useSelector((state) => state.user.user);
-  const fetchChat = useSelector((state) => state.chat.fetchChat);
+
+  const count = useSelector((state) => state.noti.chats.count);
+  const fetchChatType = useSelector((state) => state.chat.fetchChat);
+  const loginUser = useSelector((state) => state.user.user);
+  const selectedChat = useSelector((state) => state.chat.selectedChat);
+  const socket = useSelector((state) => state.socket.socket);
+
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const chats = useSelector((state) => state.chat.chats);
+
+  const END_POINT = "http://192.168.1.5:3001";
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -45,18 +57,48 @@ const ListChat = () => {
   };
 
   useEffect(() => {
+    const socketIO = io(END_POINT);
+    socketIO.emit("setup", loginUser);
+    socketIO.on("connected", () => console.log("connect"));
+    dispatch(setSocket(socketIO));
+    return () => {
+      socketIO.off("message recieved");
+    };
+  }, []);
+
+  useEffect(() => {
+    socket?.on("message recieved", (newMessageRecieved) => {
+      dispatch(fetchChat(!fetchChatType));
+      if (!selectedChat || selectedChat !== newMessageRecieved.chat._id) {
+        //notification
+        dispatch(addChatNoti(newMessageRecieved));
+        dispatch(setChatUnread(newMessageRecieved.chat._id))
+      } else {
+        dispatch(addMessage(newMessageRecieved));
+      }
+    });
+
+    return () => {
+      socket?.off("message recieved");
+    };
+  });
+
+  useEffect(() => {
     getAllChats();
-  }, [fetchChat]);
+  }, [fetchChatType]);
+
   return (
     <>
-      <IconButton
-        onClick={handleClick}
-        size="small"
-        aria-controls={open ? "list-chat-menu" : undefined}
-        aria-expanded={open ? "true" : undefined}
-      >
-        <Message sx={{ fontSize: "25px", color: dark }} />
-      </IconButton>
+      <Badge badgeContent={count} color="error" overlap="circular">
+        <IconButton
+          onClick={handleClick}
+          size="small"
+          aria-controls={open ? "list-chat-menu" : undefined}
+          aria-expanded={open ? "true" : undefined}
+        >
+          <Message sx={{ fontSize: "25px", color: dark }} />
+        </IconButton>
+      </Badge>
       <Menu
         id="list-chat-menu"
         anchorEl={anchorEl}
@@ -94,14 +136,14 @@ const ListChat = () => {
         <Box
           sx={{
             minHeight: "200px",
-            minWidth: "300px",
+            maxWidth: "300px",
             overflowY: "scroll",
             padding: "0 0.8rem",
           }}
         >
-          {chats.map((chat, index) => {
+          {chats.map((chat) => {
             return (
-              <Box key={index}>
+              <Box key={chat._id}>
                 <ChatListItem
                   latestMessage={chat.latestMessage}
                   users={chat.users}

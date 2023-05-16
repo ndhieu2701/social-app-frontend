@@ -3,7 +3,6 @@ import { useSelector } from "react-redux";
 import UserWidget from "../../components/widgets/userWidget";
 import MyPostWidget from "../../components/widgets/myPostWidget";
 import PostsWidget from "../../components/widgets/postsWidget";
-// import AdvertWidget from "scenes/widgets/AdvertWidget";
 import FriendListWidget from "../../components/widgets/friendListWidget";
 import SnackBar from "../../components/snackbar";
 
@@ -33,8 +32,6 @@ const HomePage = () => {
         </Box>
         {isNonMobileScreens && (
           <Box flexBasis="26%">
-            {/* <AdvertWidget />
-            <Box m="2rem 0" /> */}
             <FriendListWidget userId={_id} />
           </Box>
         )}
